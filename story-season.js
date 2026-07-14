@@ -1,4 +1,4 @@
-/* First-season continuation. Chapter two pays off the rain, Su Yan and the lighthouse system. */
+﻿/* First-season continuation. Chapter two pays off the rain, Su Yan and the lighthouse system. */
 itemLabels.rainbarrel='黑雨样本';itemLabels.tracker='白塔定位器';itemLabels.sistercode='姐姐的校验码';
 Object.assign(evidenceNames,{rainbarrel:'黑雨沉淀',flyer:'白塔传单',filter:'割裂滤芯',bluepowder:'蓝色示踪粉',rationmark:'被改配水线',sickbird:'中毒雨燕',tracker:'白塔定位器',tripwire:'水下绊线',valve:'泵站阀门',seal:'L-17封条',antenna:'示踪天线',sistercode:'姐姐的校验码'});
 Object.assign(investigations,{
@@ -33,43 +33,15 @@ nodes.c2_end={scene:'rooftop',title:'第二章终章 · 雨水有毒',stamp:'23:
 
 useRules['c2_pump:valve:battery']=()=>{if(s.used.c2Pump)return'主泵已经通电。';if(!spend('battery'))return'没有可用电池。';s.used.c2Pump=1;s.flags.pumpOnline=1;s.trust++;return'电池接入跨接端口，沉寂多年的主泵重新震动。黑水被切离净水管，墙上亮起“密钥 2/7”。'};
 
-const chapter2FlagKeys=['waterLocked','crowdFirst','followDrone','confrontSuyan','fairRation','hidRain','forceRation','savedCourier','exposedSuyan','suyanTurned','trackedWhiteTower','cleanPump','sealedPump','sisterTrail','c2Destroy','c2Hijack','c2Decoy','pumpOnline','rescuedOffice','executiveCard'];
-const chapter2EvidenceKeys=['rainbarrel','flyer','filter','bluepowder','rationmark','sickbird','tracker','tripwire','valve','seal','antenna','sistercode','towerRoster','executiveCard'];
-function chapter2Unlocked(){return localStorage.getItem('lastLightChapter2Unlocked')==='1'}
-function saveChapter2Checkpoint(){
-  try{localStorage.setItem('lastLightChapter2Base',JSON.stringify(s))}catch{}
-}
-function restoreChapter2Checkpoint(){
-  try{const saved=JSON.parse(localStorage.getItem('lastLightChapter2Base')||'null');if(saved&&saved.flags)return saved}catch{}
-  return null;
-}
-function clearChapter2Progress(){
-  s.flags=s.flags||{};chapter2FlagKeys.forEach(key=>delete s.flags[key]);
-  s.evidence=s.evidence||{};chapter2EvidenceKeys.forEach(key=>delete s.evidence[key]);
-  s.used=s.used||{};delete s.used.c2Pump;
-  s.history=(s.history||[]).filter(entry=>!String(entry?.from||'').startsWith('c2_'));
-}
-function startChapter2(replay=false){
-  if(!chapter2Unlocked()&&localStorage.getItem('lastLightDebugChapter2')!=='1'){say('完成第一章后才能进入第二章。');return}
-  clearInterval(crisisInterval);
-  if(replay){const checkpoint=restoreChapter2Checkpoint();if(checkpoint)s=checkpoint}else saveChapter2Checkpoint();
-  clearChapter2Progress();
-  s.chapter=2;s.node='c2_dawn';s.steps=1;s.found={};s.talked={};s.line={};s.selectedItem=null;s.echo='第一夜的选择已经保存。活下来的人和失去的东西都会继续影响第二章。';s.food=Math.max(2,s.food);s.water=Math.max(2,s.water);s.battery=Math.max(1,s.battery);
-  menu.classList.remove('show');$('chapterComplete').classList.remove('show');render();
+function startChapter2(){
+  clearInterval(crisisInterval);s.chapter=2;s.node='c2_dawn';s.steps=1;s.found={};s.talked={};s.line={};s.selectedItem=null;s.echo='第一夜的选择已经保存。活下来的人和失去的东西都会继续影响第二章。';s.food=Math.max(2,s.food);s.water=Math.max(2,s.water);s.battery=Math.max(1,s.battery);localStorage.setItem('lastLightChapter2Unlocked','1');menu.classList.remove('show');$('chapterComplete').classList.remove('show');render()
 }
 function chapter2EndingInfo(){return s.flags.c2Hijack?['全城看见了','你把白塔的标记变成了证据。']:s.flags.c2Decoy?['空泵站诱饵','敌人追向假人口，街区得到喘息。']:['从地图消失','你保住街区，却烧掉一段真相。']}
 function renderChapter2End(){
-  const [title,desc]=chapter2EndingInfo(),root=$('chapterComplete');let ends=[];try{ends=JSON.parse(localStorage.getItem('lastLightChapter2Endings')||'[]')}catch{}const id=s.flags.c2Hijack?'hijack':s.flags.c2Decoy?'decoy':'destroy';if(!ends.includes(id))ends.push(id);localStorage.setItem('lastLightChapter2Endings',JSON.stringify(ends));root.innerHTML='<h2>'+title+'</h2><p>'+desc+'</p><div class="result-stats"><span><b>'+s.trust+'</b>街区信任</span><span><b>'+Object.keys(s.evidence||{}).length+'</b>累计线索</span><span><b>2 / 7</b>关闭密钥</span></div><div class="ending-progress">第二章结局 '+ends.length+' / 3 · 第一季试玩进度 2 / 7</div><div class="result-actions"><button id="c2Menu">回到标题</button><button id="c2Retry" class="primary">重玩第二章</button></div>';root.classList.add('show');$('c2Menu').onclick=()=>{menu.classList.add('show');refreshChapter2Shortcut()};$('c2Retry').onclick=()=>startChapter2(true);
+  const [title,desc]=chapter2EndingInfo(),root=$('chapterComplete');let ends=[];try{ends=JSON.parse(localStorage.getItem('lastLightChapter2Endings')||'[]')}catch{}const id=s.flags.c2Hijack?'hijack':s.flags.c2Decoy?'decoy':'destroy';if(!ends.includes(id))ends.push(id);localStorage.setItem('lastLightChapter2Endings',JSON.stringify(ends));root.innerHTML='<h2>'+title+'</h2><p>'+desc+'</p><div class="result-stats"><span><b>'+s.trust+'</b>街区信任</span><span><b>'+Object.keys(s.evidence||{}).length+'</b>累计线索</span><span><b>2 / 7</b>关闭密钥</span></div><div class="ending-progress">第二章结局 '+ends.length+' / 3 · 第一季进度 2 / 7</div><div class="result-actions"><button id="c2Menu">回到标题</button><button id="c2Retry" class="primary">重玩第二章</button></div>';root.classList.add('show');$('c2Menu').onclick=()=>menu.classList.add('show');$('c2Retry').onclick=startChapter2
 }
-const baseEndingSeason=renderEndingReport;renderEndingReport=function(){
-  localStorage.setItem('lastLightChapter2Unlocked','1');saveChapter2Checkpoint();baseEndingSeason();refreshChapter2Shortcut();
-  const actions=$('chapterComplete').querySelector('.result-actions');if(actions&&!$('enterChapter2')){actions.classList.add('three');const next=document.createElement('button');next.id='enterChapter2';next.className='primary next-chapter';next.textContent='进入第二章';next.onclick=()=>startChapter2(false);actions.appendChild(next)}
-};
-const seasonProgress=document.createElement('div');seasonProgress.className='season-progress';seasonProgress.innerHTML='<b>第一季 · 七个雨夜</b><span>试玩版当前开放：第一章、第二章</span><button id="chapter2Shortcut">第二章：雨水有毒</button>';menu.querySelector('.start-card').appendChild(seasonProgress);
-const chapter2Shortcut=$('chapter2Shortcut');
-function refreshChapter2Shortcut(){
-  const unlocked=chapter2Unlocked();chapter2Shortcut.disabled=!unlocked;chapter2Shortcut.textContent=unlocked?'第二章：雨水有毒':'第二章：完成第一章后解锁';chapter2Shortcut.style.opacity=unlocked?'1':'.45';chapter2Shortcut.style.cursor=unlocked?'pointer':'not-allowed';
-}
-chapter2Shortcut.onclick=()=>{if(chapter2Unlocked())startChapter2(true)};refreshChapter2Shortcut();
-const baseRenderSeason=render;render=function(){baseRenderSeason();const chapter2=s.node.startsWith('c2_');document.body.classList.toggle('chapter-two',chapter2);$('chapter').textContent=chapter2?'第二章 · 雨水有毒':'第一章 · 失联者';if(chapter2){$('objective').textContent='目标：查明黑雨为什么标记幸存者';$('progress').textContent=Math.min(s.steps,7)+' / 7'}if(s.node==='c2_end')renderChapter2End();refreshChapter2Shortcut()};
+const baseEndingSeason=renderEndingReport;renderEndingReport=function(){baseEndingSeason();const actions=$('chapterComplete').querySelector('.result-actions');if(actions&&!$('enterChapter2')){actions.classList.add('three');const next=document.createElement('button');next.id='enterChapter2';next.className='primary next-chapter';next.textContent='进入第二章';next.onclick=startChapter2;actions.appendChild(next)}};
+const seasonProgress=document.createElement('div');seasonProgress.className='season-progress';seasonProgress.innerHTML='<b>第一季 · 七个雨夜</b><span>当前开放：第一章、第二章</span><button id="chapter2Shortcut">第二章：雨水有毒</button>';menu.querySelector('.start-card').appendChild(seasonProgress);$('chapter2Shortcut').onclick=startChapter2;
+const baseRenderSeason=render;render=function(){baseRenderSeason();const chapter2=s.node.startsWith('c2_');document.body.classList.toggle('chapter-two',chapter2);$('chapter').textContent=chapter2?'第二章 · 雨水有毒':'第一章 · 失联者';if(chapter2){$('objective').textContent='目标：查明黑雨为什么标记幸存者';$('progress').textContent=Math.min(s.steps,7)+' / 7'}if(s.node==='c2_end')renderChapter2End()};
 render();
+
