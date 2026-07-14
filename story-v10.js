@@ -1,5 +1,7 @@
-﻿/* Release feedback layer. Keeps the chapter data in story.js/story-v9.js. */
-const releasePrefs={sound:true,vibration:true,...JSON.parse(localStorage.getItem('lastLightPrefs')||'{}')};
+/* Release feedback layer. Keeps the chapter data in story.js/story-v9.js. */
+let storedReleasePrefs={};
+try{storedReleasePrefs=JSON.parse(localStorage.getItem('lastLightPrefs')||'{}')||{}}catch{localStorage.removeItem('lastLightPrefs')}
+const releasePrefs={sound:true,vibration:true,...storedReleasePrefs};
 let releaseAudio=null,releaseRain=null,releaseTutorial=0,releaseTutorialDone=localStorage.getItem('lastLightTutorialV10')==='1';
 
 const headerNode=document.querySelector('#scene>header');
@@ -38,11 +40,11 @@ document.addEventListener('pointerdown',ensureAudio,{once:true});
 document.addEventListener('click',e=>{if(e.target.closest('button'))playTone('tap')},{capture:true});
 
 const tutorialCopy={
-  1:['先看现场','点击画面里带金色光圈的位置。重要决定需要先找到依据。'],
-  2:['线索会留下','证物已经进入右上角。现在选择一条行动路线，后面会产生不同结果。'],
-  3:['人也是线索','先点击画面中的人物交谈。人物姿态和说法会随对话变化。'],
-  4:['不要只选菜单','点击行动包里的「药品」，再直接点击林晓，把药亲手交给她。'],
-  5:['把物品用到画面上','药品已经拿在手里。现在再次点击林晓。']
+  1:['先听人物说完','点击画面中的人物。对话会提供调查方向，也会影响你之后能做出的决定。'],
+  2:['调查异常位置','点击画面里带金色光圈的位置，靠近查看证物。'],
+  3:['亲手检查证物','先完成检查动作，再拖动出现的滑块，把细节看清楚。'],
+  4:['整理完整证据','继续调查另一处异常。证物齐全后，点击“整理证据 · 作出推断”。'],
+  5:['根据推断行动','选择最符合证据的结论。推断完成后，再从底部选择你的行动路线。']
 };
 function showTutorial(step){
   releaseTutorial=step;const copy=tutorialCopy[step];if(!copy){coach.classList.remove('show');return}
@@ -53,13 +55,16 @@ function beginTutorial(force=false){if(releaseTutorialDone&&!force)return;showTu
 function completeTutorial(){releaseTutorial=0;releaseTutorialDone=true;localStorage.setItem('lastLightTutorialV10','1');coach.classList.remove('show');flashChange('教学完成','以后可在设置中重新查看')}
 function tutorialAfterClick(e){
   const target=e.target;
-  if(releaseTutorial===1&&target.closest('.hotspot'))showTutorial(2);
-  else if(releaseTutorial===2&&target.closest('#choices button'))setTimeout(()=>{if(s.node==='clinic')showTutorial(3);else completeTutorial()},520);
-  else if(releaseTutorial===3&&target.closest('#character'))showTutorial(4);
-  else if(releaseTutorial===4&&target.closest('.action-item')&&target.textContent.includes('药品'))showTutorial(5);
-  else if(releaseTutorial===5&&target.closest('#character'))setTimeout(completeTutorial,160);
+  if(releaseTutorial===1&&target.closest('#character'))showTutorial(2);
+  else if(releaseTutorial===2&&target.closest('.hotspot'))showTutorial(3);
+  else if(releaseTutorial===4&&target.closest('.case-button'))showTutorial(5);
+  else if(releaseTutorial===5&&target.closest('#choices button'))setTimeout(completeTutorial,160);
+}
+function tutorialAfterInput(e){
+  if(releaseTutorial===3&&e.target.matches('.evidence-operation input[type="range"]')&&Number(e.target.value)>=96)showTutorial(4);
 }
 document.addEventListener('click',tutorialAfterClick,true);
+document.addEventListener('input',tutorialAfterInput,true);
 
 const endingCatalog=[
   ['decoy','无人生还名单','让敌人追逐幽灵，让所有活人离开。'],
@@ -83,8 +88,8 @@ systemModal.onclick=e=>{if(e.target===systemModal)closeSystem()};
 const menuExtra=document.createElement('div');menuExtra.className='menu-extra';menuExtra.innerHTML='<button id="openArchive">结局档案</button><button id="openSettings">设置 / 教学</button>';menu.querySelector('.start-card').appendChild(menuExtra);$('openArchive').onclick=openArchive;$('openSettings').onclick=openSettings;
 
 const baseSay10=say;say=function(text){baseSay10(text);playTone('clue');buzz(12)};
-const baseSelectItem10=selectItem;selectItem=function(id){baseSelectItem10(id);buzz(10);if(releaseTutorial===4&&id==='med')showTutorial(5)};
-const baseTryUse10=tryUse;tryUse=function(target){const beforeUsed10=Object.keys(s.used||{}).length;baseTryUse10(target);if(Object.keys(s.used||{}).length>beforeUsed10){playTone('bond');buzz([20,24,32]);positiveFlash();pulseSave();if(releaseTutorial===5)setTimeout(completeTutorial,60)}};
+const baseSelectItem10=selectItem;selectItem=function(id){baseSelectItem10(id);buzz(10)};
+const baseTryUse10=tryUse;tryUse=function(target){const beforeUsed10=Object.keys(s.used||{}).length;baseTryUse10(target);if(Object.keys(s.used||{}).length>beforeUsed10){playTone('bond');buzz([20,24,32]);positiveFlash();pulseSave()}};
 const baseGo10=go;go=function(next,effect){playTone(timedNodes[s.node]?'danger':'tap');baseGo10(next,effect);setTimeout(pulseSave,680)};
 const baseRenderEnding10=renderEndingReport;renderEndingReport=function(){baseRenderEnding10();playTone('ending');buzz([30,45,30]);positiveFlash()};
 const baseRender10=render;render=function(){baseRender10();saveState.style.display=s.node==='ending'?'none':'block'};
@@ -92,5 +97,3 @@ const baseRender10=render;render=function(){baseRender10();saveState.style.displ
 const oldNewGame10=$('newGame').onclick;$('newGame').onclick=()=>{oldNewGame10();setTimeout(()=>beginTutorial(),80)};
 const oldCloseMenu10=$('closeMenu').onclick;$('closeMenu').onclick=()=>{oldCloseMenu10();setTimeout(()=>beginTutorial(),80)};
 render();
-
-
