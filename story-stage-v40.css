@@ -1,0 +1,22 @@
+/* Integrated photography and playable route direction. */
+.scene.integrated-cast .character{background-image:none!important;background:none!important;border:0!important;filter:none!important;opacity:0!important;z-index:15;cursor:pointer}
+.scene.integrated-cast .hotspots{z-index:18}
+.scene.integrated-cast.shot-person .character.show,.scene.integrated-cast.shot-investigate .character.show,.scene.integrated-cast.shot-decision .character.show{opacity:1!important;animation:none!important;transform:none!important}
+.scene.integrated-cast.shot-investigate .character:after{content:attr(data-stage-label);left:50%;bottom:42%;opacity:.78;padding:5px 8px;border-radius:2px;background:#0b120dcc;box-shadow:0 0 0 1px #d4b45f55,0 0 18px #d4b45f33}
+.scene.integrated-cast.shot-person .character:after,.scene.integrated-cast.shot-decision .character:after{opacity:0!important}
+.scene.integrated-cast .adult-tag{background:#0c110dcc;right:12px;top:181px}
+.scene.director-mode:not(.integrated-cast) .character.show{width:48%!important;height:55%!important;left:62%!important;bottom:18%!important;filter:drop-shadow(0 16px 24px #000e) saturate(.75) brightness(.8)!important}
+.scene.director-mode:not(.integrated-cast).shot-person .character.show{width:56%!important;height:62%!important;left:60%!important}
+.stage-route{padding:0!important;display:block!important;background:#050807!important;overflow:hidden}
+.stage-route:before{z-index:3;inset:-15%!important;opacity:.55}
+.stage-route .route-camera{position:absolute;z-index:1;inset:-3%;background-image:linear-gradient(#06100b15,#030504b8),var(--route-image);background-size:116% auto;background-position:43% 50%;background-repeat:no-repeat;filter:saturate(.85) contrast(1.05);animation:routeDrift 7s ease-out both;transition:background-size 1s cubic-bezier(.2,.8,.2,1),background-position 1s,filter .6s}
+.stage-route .route-camera.route-camera-close{background-size:154% auto;background-position:68% 60%;filter:saturate(.78) contrast(1.12) brightness(.72)}
+.route-copy{position:absolute;z-index:8;left:16px;right:16px;bottom:9%;padding:15px 15px 14px;background:linear-gradient(90deg,#09110dec,#09110dc7);border-left:3px solid #dab85d;box-shadow:0 18px 44px #000d}
+.route-copy small{color:#d8b45b;font-size:8px;letter-spacing:2px}.route-copy h2{margin:5px 0;color:#f0d27e;font-size:18px}.route-copy p{margin:0;color:#c8d0c8;font-size:10px;line-height:1.65}.route-copy .route-continue{width:100%;margin-top:11px;padding:10px;border:1px solid #b59850;background:#d0aa4f;color:#16150f;font-weight:700}
+.route-scan{position:absolute;z-index:10;transform:translate(-50%,-50%);width:82px;height:82px;border:1px solid #e1c56d;border-radius:50%;background:#d9bb5814;color:#f0d581;font-size:9px;box-shadow:0 0 0 12px #e4c6610a,0 0 30px #e5c76b33;animation:routeScanPulse 1.45s infinite}
+.route-choices{position:absolute;z-index:11;left:16px;right:16px;bottom:28%;display:grid;grid-template-columns:1fr 1fr;gap:8px}.route-choices button{min-height:64px;padding:9px;border:1px solid #778176;background:#0a110ddb;color:#e7ece6;font-size:10px;backdrop-filter:blur(7px)}.route-choices button small{display:block;margin-top:5px;color:#9eaa9f;font-size:8px;line-height:1.35}.route-choices button:first-child{border-color:#78956f}.route-choices button:last-child{border-color:#b27a55}
+.route-distance{position:absolute;z-index:9;left:16px;bottom:5%;display:flex;gap:6px}.route-distance i{display:block;width:26px;height:2px;background:#4d5a50}.route-distance i:first-child{background:#dfbd61}.route-choice .route-distance i:nth-child(2),.route-followup .route-distance i:nth-child(-n+2),.route-result .route-distance i{background:#dfbd61}.route-result .route-choices{display:none}.stage-route.route-leave{animation:routeLeave .38s forwards}
+@keyframes routeDrift{from{transform:scale(1.04) translate3d(-1%,1%,0)}to{transform:scale(1) translate3d(1%,-1%,0)}}
+@keyframes routeScanPulse{70%{box-shadow:0 0 0 24px #e4c66100,0 0 34px #e5c76b44}}
+@keyframes routeLeave{to{opacity:0;filter:blur(4px);transform:scale(1.025)}}
+@media(max-width:390px){.route-copy{left:10px;right:10px}.route-choices{left:10px;right:10px}.route-copy h2{font-size:16px}}

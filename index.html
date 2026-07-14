@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>末日便利店：最后一盏灯</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="real-art.css" />
+</head>
+<body>
+  <main class="phone">
+    <header>
+      <div><small>第 <b id="day">1</b> 天 · <span id="phase">营业中</span></small><h1>最后一盏灯</h1></div>
+      <button id="sound" class="icon">♪</button>
+    </header>
+    <section class="stats">
+      <span>💰 <b id="coins">60</b></span><span>❤️ <b id="hp">3</b></span><span>🏠 <b id="shelter">40</b></span><span>⭐ <b id="trust">0</b></span>
+    </section>
+    <section class="scene">
+      <div class="weather"></div>
+      <div class="sign">OPEN</div>
+      <img id="person" class="person" src="assets/nurse.webp" alt="visitor" />
+      <div class="scene-vignette"></div>
+      <div class="counter"><span>FOOD</span><span>WATER</span><span>MED</span></div>
+    </section>
+    <section id="game" class="panel">
+      <div class="customer-line"><div><small id="role">陌生人</small><h2 id="name">有人靠近柜台</h2></div><div id="risk" class="risk">风险 ?</div></div>
+      <p id="dialog" class="dialog">“老板，开门吗？”</p>
+      <div id="clues" class="clues"></div>
+      <div class="stock"><span>罐头 <b id="food">4</b></span><span>净水 <b id="water">4</b></span><span>药品 <b id="med">2</b></span></div>
+      <div class="actions">
+        <button id="inspect" class="secondary">🔍 检查身份 <small>-2💰</small></button>
+        <button id="sell" class="primary">成交</button>
+        <button id="refuse">拒绝</button>
+      </div>
+      <p id="result" class="result"></p>
+    </section>
+    <section id="night" class="panel hidden">
+      <h2>🌙 今夜结算</h2><p id="summary"></p>
+      <div class="upgrade-grid">
+        <button data-buy="stock">📦 补充物资<br><small>12💰</small></button>
+        <button data-buy="wall">🧱 加固店铺<br><small>15💰</small></button>
+        <button data-buy="heal">🩹 包扎伤口<br><small>20💰</small></button>
+      </div>
+      <button id="nextDay" class="primary wide">迎接下一天</button>
+    </section>
+    <footer><span id="progress">顾客 1 / 5</span><button id="reset">重新开始</button></footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
