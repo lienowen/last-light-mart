@@ -8,7 +8,7 @@
 python -m http.server 8080
 ```
 
-访问 `http://localhost:8080/story.html`。
+访问 `http://localhost:8080/`。根目录现在默认进入正式剧情游戏。
 
 ## 当前内容
 
@@ -20,7 +20,6 @@ python -m http.server 8080
 
 ## 主要入口
 
-- `story.html`：当前剧情游戏
+- `index.html` / `story.html`：当前剧情游戏
 - `fp.html`：第一人称场景原型
 - `shop.html`：早期便利店经营原型
-
