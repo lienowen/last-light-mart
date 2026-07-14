@@ -38,9 +38,13 @@ function installRecoveryButton(){
   button.innerHTML=`${L('恢复上一份存档','Restore Backup')}<span>${L('仅在进度异常时使用','Use only if progress is corrupted')}</span>`;
   button.onclick=()=>{
     if(!confirm(L('恢复上一份有效存档并重新加载？','Restore the last valid backup and reload?')))return;
-    const story=window.LastLightRecovery?.restore;
-    if(typeof story==='function')story();
-    else if(typeof window.LastLightRecoveryV2?.restore==='function')window.LastLightRecoveryV2.restore();
+    let restored=false;
+    for(const [target,backup] of [['lastLightStory','lastLightStory:backup'],['lastLightMetaV2','lastLightMetaV2:backup'],['lastLightMetaV1','lastLightMetaV1:backup']]){
+      const value=localStorage.getItem(backup);
+      if(!value)continue;
+      try{JSON.parse(value);localStorage.setItem(target,value);restored=true}catch{}
+    }
+    if(restored)location.reload();
   };
   menuRoot.querySelector('.start-card')?.append(button);
 }
@@ -73,6 +77,7 @@ observer.observe(scene,{subtree:true,childList:true,attributes:true,attributeFil
 if(menuRoot)observer.observe(menuRoot,{subtree:true,childList:true});
 addEventListener('resize',()=>document.body.classList.toggle('v55-compact',innerWidth<430||innerHeight<680));
 document.body.classList.toggle('v55-compact',innerWidth<430||innerHeight<680);
+document.getElementById('newGame')?.addEventListener('click',()=>setTimeout(()=>{coachOrigin=typeof s!=='undefined'?s.node:'dawn';finishCoachWhenReady()},80));
 finishCoachWhenReady();polishSuyan();installRecoveryButton();
 if(new URLSearchParams(location.search).get('qa')==='1')setTimeout(async()=>renderQAPanel(await runQA()),1200);
 })();
