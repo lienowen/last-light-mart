@@ -23,7 +23,7 @@
         if (muted && releaseAudio.state === 'running') {
           audioWasSuspended = true;
           releaseAudio.suspend().catch(() => {});
-        } else if (!muted && audioWasSuspended && releasePrefs?.sound) {
+        } else if (!muted && audioWasSuspended && (typeof releasePrefs === 'undefined' || releasePrefs.sound)) {
           audioWasSuspended = false;
           releaseAudio.resume().catch(() => {});
         }
