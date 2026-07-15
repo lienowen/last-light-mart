@@ -8,7 +8,7 @@
 python -m http.server 8080
 ```
 
-访问 `http://localhost:8080/story.html?v=60`。
+访问 `http://localhost:8080/story.html?v=62`。
 
 ## 验证
 

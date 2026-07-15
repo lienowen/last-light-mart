@@ -3,7 +3,7 @@
 .scene-frame {
   isolation: isolate;
   background-position: center 22%;
-  animation: camera-settle .9s cubic-bezier(.2,.75,.2,1) both;
+  image-rendering: auto;
 }
 .scene-frame::before {
   content: "";
@@ -36,10 +36,9 @@
 .clue-reveal { margin:8px 0; padding:11px; border:1px solid #647368; background:#101914; }
 .clue-reveal b { color:#e7c963; }
 .clue-reveal p { margin:6px 0 0; }
-::view-transition-old(root) { animation: ll-out .14s ease both; }
-::view-transition-new(root) { animation: ll-in .22s ease both; }
-@keyframes camera-settle { from { background-size:106%; filter:brightness(.78); } to { background-size:100%; filter:none; } }
-@keyframes ll-out { to { opacity:.55; filter:brightness(.75); } }
-@keyframes ll-in { from { opacity:.4; transform:translateY(5px); } to { opacity:1; transform:none; } }
+::view-transition-old(root) { animation: ll-out .1s linear both; }
+::view-transition-new(root) { animation: ll-in .14s linear both; }
+@keyframes ll-out { to { opacity:.82; } }
+@keyframes ll-in { from { opacity:.82; } to { opacity:1; } }
 @media(max-width:700px) { .clue-operation{grid-template-columns:82px 1fr}.evidence-object{width:76px;height:76px}.scene-frame{background-position:center top} }
-@media(prefers-reduced-motion:reduce) { .scene-frame{animation:none} }
+@media(prefers-reduced-motion:reduce) { ::view-transition-old(root),::view-transition-new(root){animation:none} }
