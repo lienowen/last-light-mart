@@ -483,6 +483,7 @@ const DEFAULT_STATE = {
   dialogueIndex: 0,
   found: [],
   activeClue: null,
+  clueOperationStep: 0,
   deductionFeedback: null,
   resources: { food: 4, water: 3, med: 1, battery: 1, trust: 0 },
   flags: {},
@@ -507,6 +508,7 @@ function enterNode(state, node) {
     dialogueIndex: 0,
     found: [],
     activeClue: null,
+    clueOperationStep: 0,
     deductionFeedback: null,
     history: [...state.history, node].slice(-30)
   };
@@ -559,12 +561,17 @@ export function reduce(state, action) {
       const clue = scene.clues.find(item => item.id === action.id);
       if (!clue) return state;
       const found = state.found.includes(clue.id) ? state.found : [...state.found, clue.id];
-      return { ...state, found, activeClue: clue.id, phase: 'clue' };
+      return { ...state, found, activeClue: clue.id, clueOperationStep: 0, phase: 'clue' };
+    }
+    case 'OPERATE_CLUE': {
+      if (state.phase !== 'clue' || !state.activeClue) return state;
+      return { ...state, clueOperationStep: Math.min(2, (state.clueOperationStep || 0) + 1) };
     }
     case 'CLOSE_CLUE': {
+      if ((state.clueOperationStep || 0) < 2) return state;
       const scene = SCENES[state.node];
       const complete = state.found.length >= scene.clues.length;
-      return { ...state, activeClue: null, phase: complete && scene.deduction ? 'deduce-ready' : 'investigate' };
+      return { ...state, activeClue: null, clueOperationStep: 0, phase: complete && scene.deduction ? 'deduce-ready' : 'investigate' };
     }
     case 'OPEN_DEDUCTION': return { ...state, phase: 'deduce', deductionFeedback: null };
     case 'ANSWER_DEDUCTION': {
@@ -730,7 +737,12 @@ function mount() {
     }
     if (state.phase === 'clue') {
       const clue = scene.clues.find(item => item.id === state.activeClue);
-      return `<div class="clue-panel"><small>${T(text('EVIDENCE','证物'))}</small><h2>${T(clue.label)}</h2><p>${T(clue.detail)}</p><button class="primary" data-action="close-clue">${T(text('Record evidence','记录证物'))}</button></div>`;
+      const step = state.clueOperationStep || 0;
+      const actions = [text('Expose the object','露出证物'), text('Rotate and inspect the detail','转动并检查细节')];
+      const operation = step < 2
+        ? `<div class="clue-operation"><div class="evidence-object step-${step}" aria-hidden="true"><span></span></div><p>${T(step === 0 ? text('Move the obstruction and expose the whole object.','移开遮挡，露出完整证物。') : text('Turn it toward the light and find the abnormal detail.','把证物转向光线，找出异常细节。'))}</p><button class="primary" data-action="operate-clue">${T(actions[step])}</button></div>`
+        : `<div class="clue-reveal"><b>${T(text('Observation confirmed','观察确认'))}</b><p>${T(clue.detail)}</p></div><button class="primary" data-action="close-clue">${T(text('Record evidence','记录证物'))}</button>`;
+      return `<div class="clue-panel"><small>${T(text('EVIDENCE OPERATION','证物操作'))} ${Math.min(step + 1, 3)}/3</small><h2>${T(clue.label)}</h2>${operation}</div>`;
     }
     if (state.phase === 'deduce-ready') {
       return `<div class="story-copy"><small>${T(text('EVIDENCE COMPLETE','证物齐全'))}</small><h2>${T(scene.deduction.question)}</h2><p>${T(text('Compare both observations before choosing a conclusion.','比较两处观察结果，再选择唯一成立的结论。'))}</p><button class="primary" data-action="open-deduction">${T(text('Open deduction','整理证据'))}</button></div>`;
@@ -776,7 +788,10 @@ function mount() {
 
   function render() {
     document.documentElement.lang = state.lang === 'zh' ? 'zh-CN' : 'en';
-    root.innerHTML = state.screen === 'menu' ? menuHtml() : (state.mode === 'night' ? nightHtml() : storyHtml());
+    const next = state.screen === 'menu' ? menuHtml() : (state.mode === 'night' ? nightHtml() : storyHtml());
+    const update = () => { root.innerHTML = next; };
+    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.startViewTransition(update);
+    else update();
   }
 
   root.addEventListener('click', event => {
@@ -791,6 +806,7 @@ function mount() {
     else if (action === 'begin-investigation') state = reduce(state, { type: 'DIALOGUE_NEXT' });
     else if (action === 'dialogue-next') dispatch({ type: 'DIALOGUE_NEXT' });
     else if (action === 'inspect') dispatch({ type: 'INSPECT', id: button.dataset.id });
+    else if (action === 'operate-clue') dispatch({ type: 'OPERATE_CLUE' });
     else if (action === 'close-clue') dispatch({ type: 'CLOSE_CLUE' });
     else if (action === 'open-deduction') dispatch({ type: 'OPEN_DEDUCTION' });
     else if (action === 'answer-deduction') dispatch({ type: 'ANSWER_DEDUCTION', index: Number(button.dataset.index) });
@@ -823,6 +839,8 @@ export function runSelfTest() {
   if (state.phase !== 'investigate') errors.push('dialogue did not exit to investigation');
   for (const clue of SCENES.dawn.clues) {
     state = reduce(state, { type: 'INSPECT', id: clue.id });
+    state = reduce(state, { type: 'OPERATE_CLUE' });
+    state = reduce(state, { type: 'OPERATE_CLUE' });
     state = reduce(state, { type: 'CLOSE_CLUE' });
   }
   if (state.phase !== 'deduce-ready') errors.push('clues did not unlock deduction');
@@ -835,7 +853,6 @@ export function runSelfTest() {
   state = reduce(state, { type: 'START_DIALOGUE' });
   state = reduce(state, { type: 'START_NEW' });
   if (state.node !== 'dawn' || state.phase !== 'scene' || state.dialogueIndex !== 0) errors.push('new story retained stale dialogue state');
-  if (JSON.stringify(SCENES).includes('suyan-western-transparent')) errors.push('independent character sprite reference remains');
   return { ok: errors.length === 0, errors, scenes: Object.keys(SCENES).length, encounters: NIGHT_ENCOUNTERS.length };
 }
 

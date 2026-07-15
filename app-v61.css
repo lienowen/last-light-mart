@@ -1,0 +1,45 @@
+@import url('./app-v60.css?v=60');
+
+.scene-frame {
+  isolation: isolate;
+  background-position: center 22%;
+  animation: camera-settle .9s cubic-bezier(.2,.75,.2,1) both;
+}
+.scene-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(90deg,rgba(0,0,0,.2),transparent 24% 76%,rgba(0,0,0,.24));
+  mix-blend-mode: multiply;
+}
+.scene-shade { z-index: 2; }
+.actor-hotspot { border: 0; }
+.actor-hotspot::after {
+  inset: 72% 38% 8%;
+  border: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle,rgba(239,204,96,.38),rgba(239,204,96,0) 70%);
+  box-shadow: none;
+}
+.actor-hotspot span { bottom: 8%; transform: translate(-50%,0); border: 1px solid #d2b85c66; }
+.clue-hotspot { width: 48px; height: 48px; background: rgba(220,188,78,.08); box-shadow: 0 0 0 6px #e4c6610a,0 0 18px #e4c66144; }
+.clue-operation { display:grid; grid-template-columns:108px 1fr; gap:12px; align-items:center; }
+.clue-operation p { margin:0; color:#ced6d0; line-height:1.5; }
+.clue-operation button { grid-column:1/-1; }
+.evidence-object { position:relative; width:96px; height:96px; margin:auto; border:1px solid #917936; background:radial-gradient(circle at 42% 35%,#e0c56d,#755d26 28%,#151c17 30%,#080d0a 72%); box-shadow:inset 0 0 28px #000,0 0 28px #d8b74a33; overflow:hidden; transition:transform .35s ease,filter .35s ease; }
+.evidence-object::after { content:""; position:absolute; inset:-14%; background:repeating-linear-gradient(115deg,#171d18 0 16px,#090d0b 16px 29px); transform:translateX(0); transition:transform .45s cubic-bezier(.2,.8,.2,1); }
+.evidence-object.step-1 { transform:perspective(300px) rotateY(-16deg) scale(1.04); filter:brightness(1.2); }
+.evidence-object.step-1::after { transform:translateX(115%); }
+.evidence-object span { position:absolute; inset:31%; border:2px solid #edcf69; border-radius:4px; transform:rotate(12deg); box-shadow:0 0 12px #e9c95c; z-index:1; }
+.clue-reveal { margin:8px 0; padding:11px; border:1px solid #647368; background:#101914; }
+.clue-reveal b { color:#e7c963; }
+.clue-reveal p { margin:6px 0 0; }
+::view-transition-old(root) { animation: ll-out .14s ease both; }
+::view-transition-new(root) { animation: ll-in .22s ease both; }
+@keyframes camera-settle { from { background-size:106%; filter:brightness(.78); } to { background-size:100%; filter:none; } }
+@keyframes ll-out { to { opacity:.55; filter:brightness(.75); } }
+@keyframes ll-in { from { opacity:.4; transform:translateY(5px); } to { opacity:1; transform:none; } }
+@media(max-width:700px) { .clue-operation{grid-template-columns:82px 1fr}.evidence-object{width:76px;height:76px}.scene-frame{background-position:center top} }
+@media(prefers-reduced-motion:reduce) { .scene-frame{animation:none} }

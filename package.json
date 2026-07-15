@@ -1,0 +1,9 @@
+{
+  "name": "last-light-mart",
+  "version": "0.60.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/market-smoke.mjs"
+  }
+}
