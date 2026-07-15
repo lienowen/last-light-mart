@@ -14,8 +14,8 @@ export const SCENES = {
     asset: 'assets/story/opening-suyan-store-v5.png',
     actor: { x: 15, y: 7, w: 27, h: 62, label: text('Talk to Su Yan', '和苏妍交谈') },
     intro: text(
-      'Su Yan enters from the storm and sets a red medical bag beside the counter. She asks for help, but her eyes move first to the medicine cabinet, rear door and radio. The set is part of the scene itself—there is no separate character cutout.',
-      '苏妍从暴雨里钻进店内，把红色医疗包放在柜台旁。她嘴上说着求助，目光却先扫过药柜、后门和收音机。人物已经融入场景，不再叠加独立贴图。'
+      'Su Yan enters from the storm and sets a red medical bag beside the counter. She asks for help, but her eyes move first to the medicine cabinet, rear door and radio.',
+      '苏妍从暴雨里钻进店内，把红色医疗包放在柜台旁。她嘴上说着求助，目光却先扫过药柜、后门和收音机。'
     ),
     dialogue: [
       text('“Check whether I am armed before you decide whether to trust me.”', '“先确认我有没有武器，再决定要不要相信我。”'),
@@ -740,7 +740,7 @@ function mount() {
       const step = state.clueOperationStep || 0;
       const actions = [text('Expose the object','露出证物'), text('Rotate and inspect the detail','转动并检查细节')];
       const operation = step < 2
-        ? `<div class="clue-operation"><div class="evidence-object step-${step}" aria-hidden="true"><span></span></div><p>${T(step === 0 ? text('Move the obstruction and expose the whole object.','移开遮挡，露出完整证物。') : text('Turn it toward the light and find the abnormal detail.','把证物转向光线，找出异常细节。'))}</p><button class="primary" data-action="operate-clue">${T(actions[step])}</button></div>`
+        ? `<div class="clue-operation"><div class="evidence-object step-${step}" style="--evidence-image:url('${scene.asset}');--evidence-x:${clue.x}%;--evidence-y:${clue.y}%" role="img" aria-label="${T(clue.label)}"><span></span></div><p>${T(step === 0 ? text('Move the obstruction and expose the whole object.','移开遮挡，露出完整证物。') : text('Turn it toward the light and find the abnormal detail.','把证物转向光线，找出异常细节。'))}</p><button class="primary" data-action="operate-clue">${T(actions[step])}</button></div>`
         : `<div class="clue-reveal"><b>${T(text('Observation confirmed','观察确认'))}</b><p>${T(clue.detail)}</p></div><button class="primary" data-action="close-clue">${T(text('Record evidence','记录证物'))}</button>`;
       return `<div class="clue-panel"><small>${T(text('EVIDENCE OPERATION','证物操作'))} ${Math.min(step + 1, 3)}/3</small><h2>${T(clue.label)}</h2>${operation}</div>`;
     }
@@ -771,7 +771,7 @@ function mount() {
         <div class="scene-shade"></div>
         <div class="scene-stamp">${T(scene.stamp)}</div>
         ${state.phase === 'scene' && scene.actor ? `<button class="actor-hotspot" data-action="start-dialogue" style="left:${scene.actor.x}%;top:${scene.actor.y}%;width:${scene.actor.w}%;height:${scene.actor.h}%" aria-label="${T(scene.actor.label)}"><span>${T(scene.actor.label)}</span></button>` : ''}
-        ${canInspect ? scene.clues.map(clue => `<button class="clue-hotspot ${state.found.includes(clue.id) ? 'found' : ''}" data-action="inspect" data-id="${clue.id}" style="left:${clue.x}%;top:${clue.y}%" aria-label="${T(clue.label)}"><span>${T(clue.label)}</span></button>`).join('') : ''}
+        ${canInspect ? scene.clues.map(clue => `<button class="clue-hotspot ${state.found.includes(clue.id) ? 'found' : ''}" data-action="inspect" data-id="${clue.id}" style="--hotspot-x:${clue.x};--hotspot-y:${clue.y};left:${clue.x}%;top:${clue.y}%" aria-label="${T(clue.label)}"><span>${T(clue.label)}</span></button>`).join('') : ''}
         <div class="phase-panel">${scenePanel(scene)}</div>
         <div class="evidence-strip"><b>${T(text('Evidence','证物'))}</b>${scene.clues.length ? scene.clues.map(clue => `<span class="${state.found.includes(clue.id) ? 'found' : ''}">${state.found.includes(clue.id) ? '✓ ' : ''}${T(clue.label)}</span>`).join('') : `<span>${T(text('No investigation required','无需调查'))}</span>`}</div>
       </section>
