@@ -36,6 +36,7 @@
 .clue-reveal { margin:8px 0; padding:11px; border:1px solid #647368; background:#101914; }
 .clue-reveal b { color:#e7c963; }
 .clue-reveal p { margin:6px 0 0; }
+.detail-test{display:grid;gap:7px}.detail-test p{grid-column:1/-1}.detail-test button{margin:0!important;min-height:42px;text-align:left!important;background:#111a15;border-color:#68756b;color:#edf1ed}.detail-test .feedback{font-size:12px}
 ::view-transition-old(root) { animation: ll-out .1s linear both; }
 ::view-transition-new(root) { animation: ll-in .14s linear both; }
 @keyframes ll-out { to { opacity:.82; } }

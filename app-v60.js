@@ -23,8 +23,8 @@ export const SCENES = {
       text('“The ambulance outside is not mine. Watch where I step.”', '“外面那辆救护车不是我的。看清我踩过的位置。”')
     ],
     clues: [
-      { id: 'ledger', x: 64, y: 82, label: text('Altered inventory', '被改过的清单'), detail: text('A wet fingerprint touches only the missing-medicine row. The rest of the page is dry.', '半枚湿指纹只落在缺药一行，其他位置都是干的。') },
-      { id: 'key', x: 35, y: 84, label: text('Fresh red paint', '钥匙上的新鲜红漆'), detail: text('Fresh red paint is trapped between the key teeth. It was used recently near painted equipment.', '钥匙齿缝里卡着新鲜红漆，说明它刚接触过某种设备。') }
+      { id: 'ledger', x: 64, y: 82, label: text('Altered inventory', '被改过的清单'), detail: text('A wet fingerprint touches only the missing-medicine row. The rest of the page is dry.', '半枚湿指纹只落在缺药一行，其他位置都是干的。'), inspect: { prompt: text('Which detail proves the page was targeted?', '哪个细节能证明这页清单被人有目的地翻过？'), options: [text('The fingerprint touches only the missing-medicine row.', '湿指纹只压在缺药那一行。'), text('The paper has an old fold.', '纸张上有一道旧折痕。'), text('The ledger uses blue ink.', '清单使用了蓝色墨水。')], correct: 0 } },
+      { id: 'key', x: 35, y: 84, label: text('Fresh red paint', '钥匙上的新鲜红漆'), detail: text('Fresh red paint is trapped between the key teeth. It was used recently near painted equipment.', '钥匙齿缝里卡着新鲜红漆，说明它刚接触过某种设备。'), inspect: { prompt: text('Where is the useful trace?', '真正有用的痕迹藏在哪里？'), options: [text('On the smooth face of the key.', '钥匙平整的正面。'), text('Fresh paint is trapped between the teeth.', '钥匙齿缝里的新鲜红漆。'), text('On the old metal ring.', '已经生锈的钥匙圈。')], correct: 1 } }
     ],
     deduction: {
       question: text('Why did Su Yan find this store so precisely?', '苏妍为什么能准确找到这家店？'),
@@ -484,6 +484,8 @@ const DEFAULT_STATE = {
   found: [],
   activeClue: null,
   clueOperationStep: 0,
+  clueFeedback: null,
+  mistakes: 0,
   deductionFeedback: null,
   resources: { food: 4, water: 3, med: 1, battery: 1, trust: 0 },
   flags: {},
@@ -509,6 +511,7 @@ function enterNode(state, node) {
     found: [],
     activeClue: null,
     clueOperationStep: 0,
+    clueFeedback: null,
     deductionFeedback: null,
     history: [...state.history, node].slice(-30)
   };
@@ -561,17 +564,26 @@ export function reduce(state, action) {
       const clue = scene.clues.find(item => item.id === action.id);
       if (!clue) return state;
       const found = state.found.includes(clue.id) ? state.found : [...state.found, clue.id];
-      return { ...state, found, activeClue: clue.id, clueOperationStep: 0, phase: 'clue' };
+      return { ...state, found, activeClue: clue.id, clueOperationStep: 0, clueFeedback: null, phase: 'clue' };
     }
     case 'OPERATE_CLUE': {
       if (state.phase !== 'clue' || !state.activeClue) return state;
       return { ...state, clueOperationStep: Math.min(2, (state.clueOperationStep || 0) + 1) };
     }
+    case 'EXAMINE_DETAIL': {
+      if (state.phase !== 'clue' || state.clueOperationStep !== 1) return state;
+      const scene = SCENES[state.node];
+      const clue = scene.clues.find(item => item.id === state.activeClue);
+      if (!clue?.inspect) return state;
+      if (action.index === clue.inspect.correct) return { ...state, clueOperationStep: 2, clueFeedback: { correct: true, text: clue.detail } };
+      const resources = { ...state.resources, battery: Math.max(0, state.resources.battery - 1) };
+      return { ...state, resources, mistakes: (state.mistakes || 0) + 1, clueFeedback: { correct: false, text: text('That detail is ordinary. The scanner loses power. Battery -1.', '这个细节很普通，扫描仪白白耗电。电池 -1。') } };
+    }
     case 'CLOSE_CLUE': {
       if ((state.clueOperationStep || 0) < 2) return state;
       const scene = SCENES[state.node];
       const complete = state.found.length >= scene.clues.length;
-      return { ...state, activeClue: null, clueOperationStep: 0, phase: complete && scene.deduction ? 'deduce-ready' : 'investigate' };
+      return { ...state, activeClue: null, clueOperationStep: 0, clueFeedback: null, phase: complete && scene.deduction ? 'deduce-ready' : 'investigate' };
     }
     case 'OPEN_DEDUCTION': return { ...state, phase: 'deduce', deductionFeedback: null };
     case 'ANSWER_DEDUCTION': {
@@ -739,8 +751,9 @@ function mount() {
       const clue = scene.clues.find(item => item.id === state.activeClue);
       const step = state.clueOperationStep || 0;
       const actions = [text('Expose the object','露出证物'), text('Rotate and inspect the detail','转动并检查细节')];
+      const detailTest = step === 1 && clue.inspect ? `<div class="detail-test"><p>${T(clue.inspect.prompt)}</p>${clue.inspect.options.map((option,index)=>`<button data-action="examine-detail" data-index="${index}">${T(option)}</button>`).join('')}${state.clueFeedback ? `<p class="feedback wrong">${T(state.clueFeedback.text)}</p>` : ''}</div>` : '';
       const operation = step < 2
-        ? `<div class="clue-operation"><div class="evidence-object step-${step}" style="--evidence-image:url('${scene.asset}');--evidence-x:${clue.x}%;--evidence-y:${clue.y}%" role="img" aria-label="${T(clue.label)}"><span></span></div><p>${T(step === 0 ? text('Move the obstruction and expose the whole object.','移开遮挡，露出完整证物。') : text('Turn it toward the light and find the abnormal detail.','把证物转向光线，找出异常细节。'))}</p><button class="primary" data-action="operate-clue">${T(actions[step])}</button></div>`
+        ? `<div class="clue-operation"><div class="evidence-object step-${step}" style="--evidence-image:url('${scene.asset}');--evidence-x:${clue.x}%;--evidence-y:${clue.y}%" role="img" aria-label="${T(clue.label)}"><span></span></div>${detailTest || `<p>${T(step === 0 ? text('Move the obstruction and expose the whole object.','移开遮挡，露出完整证物。') : text('Turn it toward the light and find the abnormal detail.','把证物转向光线，找出异常细节。'))}</p><button class="primary" data-action="operate-clue">${T(actions[step])}</button>`}</div>`
         : `<div class="clue-reveal"><b>${T(text('Observation confirmed','观察确认'))}</b><p>${T(clue.detail)}</p></div><button class="primary" data-action="close-clue">${T(text('Record evidence','记录证物'))}</button>`;
       return `<div class="clue-panel"><small>${T(text('EVIDENCE OPERATION','证物操作'))} ${Math.min(step + 1, 3)}/3</small><h2>${T(clue.label)}</h2>${operation}</div>`;
     }
@@ -807,6 +820,7 @@ function mount() {
     else if (action === 'dialogue-next') dispatch({ type: 'DIALOGUE_NEXT' });
     else if (action === 'inspect') dispatch({ type: 'INSPECT', id: button.dataset.id });
     else if (action === 'operate-clue') dispatch({ type: 'OPERATE_CLUE' });
+    else if (action === 'examine-detail') dispatch({ type: 'EXAMINE_DETAIL', index: Number(button.dataset.index) });
     else if (action === 'close-clue') dispatch({ type: 'CLOSE_CLUE' });
     else if (action === 'open-deduction') dispatch({ type: 'OPEN_DEDUCTION' });
     else if (action === 'answer-deduction') dispatch({ type: 'ANSWER_DEDUCTION', index: Number(button.dataset.index) });
@@ -840,7 +854,7 @@ export function runSelfTest() {
   for (const clue of SCENES.dawn.clues) {
     state = reduce(state, { type: 'INSPECT', id: clue.id });
     state = reduce(state, { type: 'OPERATE_CLUE' });
-    state = reduce(state, { type: 'OPERATE_CLUE' });
+    state = clue.inspect ? reduce(state, { type: 'EXAMINE_DETAIL', index: clue.inspect.correct }) : reduce(state, { type: 'OPERATE_CLUE' });
     state = reduce(state, { type: 'CLOSE_CLUE' });
   }
   if (state.phase !== 'deduce-ready') errors.push('clues did not unlock deduction');
