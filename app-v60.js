@@ -52,8 +52,8 @@ export const SCENES = {
       text('“Good. You noticed the danger was not where I wanted you to look.”', '“很好。你发现危险不在我希望你看的地方。”')
     ],
     clues: [
-      { id: 'wire', x: 70, y: 79, label: text('Wire in the water', '积水里的细线'), detail: text('The wire is too weak to trip a person. It connects to empty cans that would reveal movement.', '钢丝不足以绊倒成年人，却连接着会暴露位置的空罐。') },
-      { id: 'brick', x: 35, y: 74, label: text('Dry stepping stone', '唯一干燥落脚点'), detail: text('Su Yan keeps one foot on the only safe brick and reaches across the wire.', '苏妍始终踩着唯一安全的砖面，伸手方向正好越过钢丝。') }
+      { id: 'wire', x: 70, y: 79, label: text('Wire in the water', '积水里的细线'), detail: text('The wire is too weak to trip a person. It connects to empty cans that would reveal movement.', '钢丝不足以绊倒成年人，却连接着会暴露位置的空罐。'), inspect: { prompt: text('Trace the wire. What is it designed to do?', '沿着钢丝追踪，它真正的用途是什么？'), options: [text('Pull down the ambulance door.', '拉开救护车门。'), text('Rattle empty cans and expose movement.', '带动空罐，暴露经过的人。'), text('Carry electricity through the water.', '通过积水导电。')], correct: 1 } },
+      { id: 'brick', x: 35, y: 74, label: text('Dry stepping stone', '唯一干燥落脚点'), detail: text('Su Yan keeps one foot on the only safe brick and reaches across the wire.', '苏妍始终踩着唯一安全的砖面，伸手方向正好越过钢丝。'), inspect: { prompt: text('Compare the wet ground. Which route is deliberate?', '对比地面积水，哪条路线是被刻意留下的？'), options: [text('The single dry brick beneath Su Yan.', '苏妍脚下唯一干燥的砖面。'), text('The deepest puddle beside the van.', '车辆旁最深的积水。'), text('The oil stain near the wall.', '墙边的旧油迹。')], correct: 0 } }
     ],
     deduction: {
       question: text('What is Su Yan controlling by reaching toward you?', '苏妍伸手真正想控制什么？'),
@@ -80,8 +80,8 @@ export const SCENES = {
       text('“The broadcast was not sent from this room.”', '“广播不是从这间病房发出的。”')
     ],
     clues: [
-      { id: 'footprint', x: 38, y: 70, label: text('Painted footprint', '带红漆的脚印'), detail: text('The same shoes travelled between the clinic and store. Fresh red paint remains in the heel.', '同一双鞋往返诊所与便利店，鞋跟还夹着新鲜红漆。') },
-      { id: 'window', x: 72, y: 46, label: text('23:47 on the glass', '玻璃上的 23:47'), detail: text('The writing faces outward, so it was written from inside the room.', '笔画朝外，说明时间是从病房内部写下的。') }
+      { id: 'footprint', x: 38, y: 70, label: text('Painted footprint', '带红漆的脚印'), detail: text('The same shoes travelled between the clinic and store. Fresh red paint remains in the heel.', '同一双鞋往返诊所与便利店，鞋跟还夹着新鲜红漆。'), inspect: { prompt: text('Match the route. Which trace is recent?', '对照路线，哪个痕迹刚刚形成？'), options: [text('Fresh red paint pressed into the heel.', '鞋跟压入的新鲜红漆。'), text('A worn crack in the sole.', '鞋底长期磨损的裂纹。'), text('Dry dust on the toe.', '鞋尖上的干灰。')], correct: 0 } },
+      { id: 'window', x: 72, y: 46, label: text('23:47 on the glass', '玻璃上的 23:47'), detail: text('The writing faces outward, so it was written from inside the room.', '笔画朝外，说明时间是从病房内部写下的。'), inspect: { prompt: text('Read the reversed strokes. Where was the writer?', '观察反向笔画，写字的人站在哪里？'), options: [text('Outside in the courtyard.', '院子外面。'), text('Inside the sealed room.', '封锁病房内部。'), text('On the rooftop opposite.', '对面屋顶。')], correct: 1 } }
     ],
     deduction: {
       question: text('What links the clinic, store and rooftop?', '什么把诊所、便利店和屋顶连在一起？'),
@@ -108,8 +108,8 @@ export const SCENES = {
       text('“The map connects rooftop antennas, rain pipes and the underground pump.”', '“地图把屋顶天线、雨水管和地下泵站连成了闭环。”')
     ],
     clues: [
-      { id: 'sample', x: 54, y: 57, label: text('Magnetic sediment', '磁性沉淀'), detail: text('The particles align along metal instead of settling like ordinary mud.', '颗粒沿金属边缘排列，不像普通淤泥那样沉降。') },
-      { id: 'map', x: 79, y: 29, label: text('Closed maintenance loop', '闭环检修路线'), detail: text('Rooftop antenna, rain system and pump station share the same marked loop.', '屋顶天线、雨水系统与泵站被同一条红线连成闭环。') }
+      { id: 'sample', x: 54, y: 57, label: text('Magnetic sediment', '磁性沉淀'), detail: text('The particles align along metal instead of settling like ordinary mud.', '颗粒沿金属边缘排列，不像普通淤泥那样沉降。'), inspect: { prompt: text('Move the cap beside the sample. What changes?', '把金属瓶盖靠近水样，发生了什么？'), options: [text('Particles align toward the metal.', '颗粒朝金属方向排列。'), text('The water immediately evaporates.', '水样立即蒸发。'), text('The glass changes color.', '玻璃本身变色。')], correct: 0 } },
+      { id: 'map', x: 79, y: 29, label: text('Closed maintenance loop', '闭环检修路线'), detail: text('Rooftop antenna, rain system and pump station share the same marked loop.', '屋顶天线、雨水系统与泵站被同一条红线连成闭环。'), inspect: { prompt: text('Complete the route. Which three systems form one loop?', '补全路线，哪三个系统构成闭环？'), options: [text('Clinic, roadblock and pharmacy.', '诊所、路障和药房。'), text('Antenna, rain pipes and pump station.', '天线、雨水管和泵站。'), text('Store, ambulance and courtyard.', '便利店、救护车和院子。')], correct: 1 } }
     ],
     deduction: {
       question: text('What is the black rain being used for?', '黑雨正在被用来做什么？'),
@@ -654,6 +654,9 @@ export function validateContent() {
     if (!scene.asset) errors.push(`${id}: missing asset`);
     const clueIds = (scene.clues || []).map(clue => clue.id);
     if (new Set(clueIds).size !== clueIds.length) errors.push(`${id}: duplicate clue id`);
+    for (const clue of scene.clues || []) {
+      if (clue.inspect && (!Array.isArray(clue.inspect.options) || clue.inspect.options.length < 2 || !clue.inspect.options[clue.inspect.correct])) errors.push(`${id}/${clue.id}: invalid inspection challenge`);
+    }
     for (const choice of scene.choices || []) if (choice.next && !SCENES[choice.next]) errors.push(`${id}: missing target ${choice.next}`);
   }
   return errors;
