@@ -135,8 +135,8 @@ export const SCENES = {
       text('“The main road is blocked. The maintenance garage is our only exit.”', '“主路被堵死了，后仓机修间是唯一出口。”')
     ],
     clues: [
-      { id: 'warehouseKey', x: 28, y: 62, label: text('Warehouse key', '仓库钥匙'), detail: text('Its teeth match the store lock and carry the same red paint as rooftop equipment.', '齿形与后仓锁吻合，红漆也与屋顶设备一致。') },
-      { id: 'patrol', x: 72, y: 37, label: text('Unmarked patrol light', '无编号巡逻灯'), detail: text('The vehicle scans on a fixed seven-second cycle and carries rooftop sealant on its tyres.', '车辆按固定七秒节奏扫描，轮胎还沾着屋顶防水材料。') }
+      { id: 'warehouseKey', x: 28, y: 62, label: text('Warehouse key', '仓库钥匙'), detail: text('Its teeth match the store lock and carry the same red paint as rooftop equipment.', '齿形与后仓锁吻合，红漆也与屋顶设备一致。'), inspect: { prompt: text('Compare the key with the route evidence.', '把钥匙与路线证据进行比对。'), options: [text('Its teeth and red paint match two known locations.', '齿形与红漆同时对应两个已知地点。'), text('The ring is made of common steel.', '钥匙圈是普通钢材。'), text('The key feels cold.', '钥匙摸起来很凉。')], correct: 0 } },
+      { id: 'patrol', x: 72, y: 37, label: text('Unmarked patrol light', '无编号巡逻灯'), detail: text('The vehicle scans on a fixed seven-second cycle and carries rooftop sealant on its tyres.', '车辆按固定七秒节奏扫描，轮胎还沾着屋顶防水材料。'), inspect: { prompt: text('Watch two scan cycles. What repeats?', '连续观察两轮扫描，什么规律重复出现？'), options: [text('A random sweep every few seconds.', '毫无规律的扫射。'), text('A fixed seven-second scan with rooftop sealant on the tyres.', '固定七秒扫描，轮胎带有屋顶密封胶。'), text('The driver flashes the headlights twice.', '司机闪烁两次车灯。')], correct: 1 } }
     ],
     deduction: {
       question: text('Who is controlling the route?', '谁在控制幸存者的移动路线？'),
@@ -162,8 +162,8 @@ export const SCENES = {
       text('“There is a service route back to the store.”', '“这里有一条回便利店的检修道。”')
     ],
     clues: [
-      { id: 'cable', x: 78, y: 37, label: text('Freshly cut cable', '新切断的电缆'), detail: text('The copper strands were cut cleanly from the control-box side.', '铜丝从控制箱一侧被整齐切断。') },
-      { id: 'badge', x: 43, y: 55, label: text('Rescue badge', '救援徽章'), detail: text('The badge number matches a former fire-rescue maintenance unit.', '徽章编号属于曾参与消防救援维护的队伍。') }
+      { id: 'cable', x: 78, y: 37, label: text('Freshly cut cable', '新切断的电缆'), detail: text('The copper strands were cut cleanly from the control-box side.', '铜丝从控制箱一侧被整齐切断。'), inspect: { prompt: text('Inspect the copper strands. How did the cable fail?', '检查铜丝断面，电缆是怎样损坏的？'), options: [text('Heat melted it from the motor side.', '电机一侧过热熔断。'), text('A tool cut it cleanly from the control box.', '有人从控制箱一侧用工具整齐切断。'), text('Water slowly corroded it.', '积水缓慢腐蚀。')], correct: 1 } },
+      { id: 'badge', x: 43, y: 55, label: text('Rescue badge', '救援徽章'), detail: text('The badge number matches a former fire-rescue maintenance unit.', '徽章编号属于曾参与消防救援维护的队伍。'), inspect: { prompt: text('Verify the badge number against the roster.', '把徽章编号与旧名册核对。'), options: [text('It belongs to a former fire-rescue maintenance unit.', '编号属于原消防救援维护队。'), text('It is a supermarket loyalty number.', '编号属于超市会员。'), text('The number has been filed away.', '编号已被完全磨掉。')], correct: 0 } }
     ],
     deduction: {
       question: text('Was the shutter failure accidental?', '卷帘门故障是意外吗？'),
@@ -186,8 +186,8 @@ export const SCENES = {
     intro: text('The shutter receives three long knocks and two short ones. The same rhythm answers from behind the warehouse shelves.', '卷帘门响起三长两短，仓库货架后方也传来同样节奏。'),
     dialogue: [],
     clues: [
-      { id: 'shutter', x: 52, y: 42, label: text('Knock pattern', '敲门节奏'), detail: text('The rhythm matches the noise hidden beneath the old broadcast.', '敲门节奏与旧广播底噪完全吻合。') },
-      { id: 'backdoor', x: 20, y: 70, label: text('Cold air behind shelves', '货架后的冷风'), detail: text('Cold air passes through a hollow wall behind the storage shelves.', '货架后方墙体是空的，有冷风持续渗出。') }
+      { id: 'shutter', x: 52, y: 42, label: text('Knock pattern', '敲门节奏'), detail: text('The rhythm matches the noise hidden beneath the old broadcast.', '敲门节奏与旧广播底噪完全吻合。'), inspect: { prompt: text('Tap the rhythm that matches the recording.', '选择与录音底噪一致的节奏。'), options: [text('Three long, two short.', '三长两短。'), text('Five even knocks.', '连续五次等长敲击。'), text('Two short, three long.', '两短三长。')], correct: 0 } },
+      { id: 'backdoor', x: 20, y: 70, label: text('Cold air behind shelves', '货架后的冷风'), detail: text('Cold air passes through a hollow wall behind the storage shelves.', '货架后方墙体是空的，有冷风持续渗出。'), inspect: { prompt: text('Move the paper strip along the wall. Where does it react?', '沿墙移动纸条，哪里出现气流？'), options: [text('At the solid concrete pillar.', '实心水泥柱旁。'), text('Behind the storage shelves.', '仓库货架后方。'), text('Beside the refrigerator motor.', '冰柜电机旁。')], correct: 1 } }
     ],
     deduction: {
       question: text('What does the matching rhythm reveal?', '相同节奏说明了什么？'),
@@ -211,8 +211,8 @@ export const SCENES = {
     intro: text('A recorder repeats the distress call beside sealed emergency crates. The final seconds contain a live vehicle challenge code.', '录音机循环播放求救声，旁边堆着封存物资。磁带末尾藏着一段车辆挑战码。'),
     dialogue: [],
     clues: [
-      { id: 'recorder', x: 34, y: 58, label: text('Loop recorder', '循环录音机'), detail: text('The distress call repeats perfectly, but a real coordinate appears at the end.', '求救声完全重复，末尾却混入一组真人坐标。') },
-      { id: 'crates', x: 72, y: 64, label: text('Emergency seals', '应急物资封条'), detail: text('The seals belong to a dissolved department that once managed evacuation signals.', '封条属于一个早已解散、曾管理撤离信号的部门。') }
+      { id: 'recorder', x: 34, y: 58, label: text('Loop recorder', '循环录音机'), detail: text('The distress call repeats perfectly, but a real coordinate appears at the end.', '求救声完全重复，末尾却混入一组真人坐标。'), inspect: { prompt: text('Scrub the final five seconds. What breaks the loop?', '拖到最后五秒，什么内容打破了循环？'), options: [text('A live coordinate hidden after the repeated plea.', '重复求救后藏着一组实时坐标。'), text('A music station ident.', '音乐频道台标。'), text('The recorder simply stops.', '录音正常结束。')], correct: 0 } },
+      { id: 'crates', x: 72, y: 64, label: text('Emergency seals', '应急物资封条'), detail: text('The seals belong to a dissolved department that once managed evacuation signals.', '封条属于一个早已解散、曾管理撤离信号的部门。'), inspect: { prompt: text('Match the seal to the archived authority.', '把封条与旧部门档案核对。'), options: [text('City sanitation supplies.', '城市环卫物资。'), text('A dissolved evacuation-signal department.', '已解散的撤离信号管理部门。'), text('A private pharmacy chain.', '私人连锁药房。')], correct: 1 } }
     ],
     deduction: {
       question: text('Why was the loop created?', '为什么有人制作这段循环广播？'),
@@ -238,8 +238,8 @@ export const SCENES = {
       text('“Your answer decides who reaches the street first.”', '“你的回答决定谁先抵达这条街。”')
     ],
     clues: [
-      { id: 'channels', x: 42, y: 68, label: text('Overlapping radio noise', '重合的频道底噪'), detail: text('One channel carries the same background engine as the unmarked patrol vehicle.', '其中一个频道带着与无编号巡逻车相同的发动机底噪。') },
-      { id: 'signalLamp', x: 72, y: 24, label: text('Three short, one long', '三短一长验证灯'), detail: text('The genuine East Line response repeats the challenge code correctly.', '真正的东线车辆正确回应了挑战码。') }
+      { id: 'channels', x: 42, y: 68, label: text('Overlapping radio noise', '重合的频道底噪'), detail: text('One channel carries the same background engine as the unmarked patrol vehicle.', '其中一个频道带着与无编号巡逻车相同的发动机底噪。'), inspect: { prompt: text('Isolate the engine layer. Which channel is compromised?', '分离发动机底噪，哪个频道有问题？'), options: [text('The channel sharing the patrol vehicle engine.', '与无编号巡逻车发动机同源的频道。'), text('The silent emergency channel.', '完全静默的应急频道。'), text('Both channels have identical clean audio.', '两个频道都没有底噪。')], correct: 0 } },
+      { id: 'signalLamp', x: 72, y: 24, label: text('Three short, one long', '三短一长验证灯'), detail: text('The genuine East Line response repeats the challenge code correctly.', '真正的东线车辆正确回应了挑战码。'), inspect: { prompt: text('Enter the verified lamp sequence.', '选择正确的验证灯序列。'), options: [text('One long, three short.', '一长三短。'), text('Three short, one long.', '三短一长。'), text('Two long, two short.', '两长两短。')], correct: 1 } }
     ],
     deduction: {
       question: text('Which vehicle is genuine?', '哪一辆车才是真的？'),
@@ -772,7 +772,8 @@ function mount() {
     }
     if (state.phase === 'ending') {
       const ending = scene.endingText ? T(scene.endingText(state)) : T(scene.intro);
-      return `<div class="ending-panel"><small>${T(text('CHAPTER RESULT','章节结算'))}</small><h2>${T(scene.title)}</h2><p>${ending}</p><div class="decision-options">${scene.choices.map((choice, index) => `<button data-action="choose" data-index="${index}"><b>${T(choice.label)}</b><span>${T(choice.hint)}</span></button>`).join('')}</div></div>`;
+      const mistakes = state.mistakes ? `<p class="feedback wrong">${T(text(`${state.mistakes} observation mistakes drained your scanner and changed how the group judged you.`, `你出现了 ${state.mistakes} 次观察失误，扫描仪电量被浪费，队伍也记住了你的判断。`))}</p>` : `<p class="feedback correct">${T(text('Clean investigation: no observation mistakes.', '精准调查：没有出现观察失误。'))}</p>`;
+      return `<div class="ending-panel"><small>${T(text('CHAPTER RESULT','章节结算'))}</small><h2>${T(scene.title)}</h2><p>${ending}</p>${mistakes}<div class="decision-options">${scene.choices.map((choice, index) => `<button data-action="choose" data-index="${index}"><b>${T(choice.label)}</b><span>${T(choice.hint)}</span></button>`).join('')}</div></div>`;
     }
     return '';
   }
